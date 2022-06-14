@@ -1,21 +1,31 @@
 protocol Parkable {
     var plate: String { get }
+    var vehicleType: Int { get }
+    var discountCard: String { get }
+    var totalTime: Double { get }
+    
 }
 
-struct Vehicle: Hashable, Parkable {
-    let plate: String
-    let model: String
+struct Vehicle: Parkable, Hashable {
+    var plate: String
+    var vehicleType: Int
+    var discountCard: String
+    var totalTime: Double
+    
+    //Hashtable
     func hash(into hasher: inout Hasher) {
         hasher.combine(plate.hashValue)
     }
     
-    static func == (lhs: Vehicle, rhs: Vehicle) -> Bool {
+    //Equatable
+    static func == (lhs: Vehicle, rhs: Vehicle) -> Bool{
         lhs.plate == rhs.plate
     }
+    
 }
-
-struct Parking {
+struct Parking{
+    
     var vehicles: Set<Vehicle> = Set()
 }
- 
 
+let alkeParking: Parking = Parking()
