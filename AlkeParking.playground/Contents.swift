@@ -42,40 +42,33 @@ struct Vehicle: Parkable, Hashable {
 }
 
 struct Parking{
+    let maxVehicles: Int
     var vehicles: Set<Vehicle> = Set()
     
     
     mutating func checkInVehicle(_ vehicle: Vehicle, onFinish:
     (Bool) -> Void) {
-
+        guard (vehicles.count < maxVehicles) && !vehicles.contains(vehicle) else {
+            return onFinish(false)
+        }
+        
+        onFinish(vehicles.insert(vehicle).inserted)
     }
 }
 
-var alkeParking = Parking()
+var alkeParking = Parking(maxVehicles: 2)
 
-let car = Vehicle(plate: "AA111AA", vehicleType: .car, checkInTime: Date(), discountCard: "DISCOUNT_CARD_001")
+alkeParking.checkInVehicle(Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date())) {
+    print("Inserido: \($0)")
+}
 
-let moto = Vehicle(plate: "B222BBB", vehicleType: .motorcycle, checkInTime: Date(), discountCard: nil)
+alkeParking.checkInVehicle(Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date())) {
+    print("Inserido: \($0)")
+}  /// inserido: false, pois estamos tentando dar checkin num carro com placa igual
 
-let miniBus = Vehicle(plate: "CC333CC", vehicleType: .microbus, checkInTime: Date(), discountCard:
-nil)
-
-let bus = Vehicle(plate: "DD444DD", vehicleType: .bus, checkInTime: Date(), discountCard: "DISCOUNT_CARD_002")
-
-alkeParking.vehicles.insert(car)
-
-alkeParking.vehicles.insert(moto)
-
-alkeParking.vehicles.insert(miniBus)
-
-alkeParking.vehicles.insert(bus)
-
-let car1 = Vehicle(plate: "AA111AA", vehicleType: .car, checkInTime: Date(), discountCard: "DISCOUNT_CARD_001")
-
-let car2 = Vehicle(plate: "AA111AA", vehicleType: .car, checkInTime: Date(), discountCard: "DISCOUNT_CARD_003")
-
-print(alkeParking.vehicles.insert(car).inserted)
-
-print(alkeParking.vehicles.insert(car2).inserted)
-
-alkeParking.vehicles.remove(moto)
+alkeParking.checkInVehicle(Vehicle(plate: "BBB", vehicleType: VehicleType.car, checkInTime: Date())) {
+    print("Inserido: \($0)")
+}
+alkeParking.checkInVehicle(Vehicle(plate: "CCC", vehicleType: VehicleType.car, checkInTime: Date())) {
+    print("Inserido: \($0)")
+} ///  inserido: false, pois já tem o numero máximo de veículos estacionados (2)
