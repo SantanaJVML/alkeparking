@@ -18,7 +18,7 @@ protocol Parkable {
     var vehicleType: VehicleType { get }
     var discountCard: String? { get set }
     var checkInTime: Date { get }
-    
+    var parkedTime: Int { get }
 }
 
 struct Vehicle: Parkable, Hashable {
@@ -26,6 +26,9 @@ struct Vehicle: Parkable, Hashable {
     let vehicleType: VehicleType
     let checkInTime: Date = Date()
     var discountCard: String?
+    var parkedTime: Int {
+        get { Calendar.current.dateComponents([.minute], from: checkInTime, to: Date()).minute ?? 0 }
+    }
     
     //Hashtable
     func hash(into hasher: inout Hasher) {
