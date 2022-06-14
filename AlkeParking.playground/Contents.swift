@@ -1,16 +1,31 @@
+import UIKit
+
+enum VehicleType {
+    case carro, motocicleta, microonibus, onibus
+    
+    var tarifa: Int {
+        switch self {
+            case .carro: return 20
+            case .motocicleta: return 15
+            case .microonibus: return 25
+            case .onibus: return 30
+        }
+    }
+}
+
 protocol Parkable {
     var plate: String { get }
-    var vehicleType: Int { get }
-    var discountCard: String { get }
-    var totalTime: Double { get }
+    var vehicleType: VehicleType { get }
+    var discountCard: String? { get set }
+    var totalTime: Date { get }
     
 }
 
 struct Vehicle: Parkable, Hashable {
-    var plate: String
-    var vehicleType: Int
-    var discountCard: String
-    var totalTime: Double
+    let plate: String
+    let vehicleType: VehicleType
+    let totalTime: Date = Date()
+    var discountCard: String?
     
     //Hashtable
     func hash(into hasher: inout Hasher) {
@@ -18,13 +33,12 @@ struct Vehicle: Parkable, Hashable {
     }
     
     //Equatable
-    static func == (lhs: Vehicle, rhs: Vehicle) -> Bool{
+    static func == (lhs: Vehicle, rhs: Vehicle) -> Bool {
         lhs.plate == rhs.plate
     }
-    
 }
+
 struct Parking{
-    
     var vehicles: Set<Vehicle> = Set()
 }
 
