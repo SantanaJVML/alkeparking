@@ -17,14 +17,14 @@ protocol Parkable {
     var plate: String { get }
     var vehicleType: VehicleType { get }
     var discountCard: String? { get set }
-    var totalTime: Date { get }
+    var checkInTime: Date { get }
     
 }
 
 struct Vehicle: Parkable, Hashable {
     let plate: String
     let vehicleType: VehicleType
-    let totalTime: Date = Date()
+    let checkInTime: Date = Date()
     var discountCard: String?
     
     //Hashtable
