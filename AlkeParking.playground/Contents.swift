@@ -1,5 +1,7 @@
 import UIKit
 
+var vehiclesList: Set<Vehicle> = [Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil), Vehicle(plate: "BBB", vehicleType: VehicleType.car, checkInTime:  Date(), discountCard: nil), Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime:  Date(), discountCard: nil), Vehicle(plate: "CCC", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil), Vehicle(plate: "CCD", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil)]
+
 enum VehicleType {
     case car, motorcycle, microbus, bus
     
@@ -47,28 +49,26 @@ struct Parking{
     
     
     mutating func checkInVehicle(_ vehicle: Vehicle, onFinish:
-    (Bool) -> Void) {
+                                 (Bool) -> Void) {
+        
         guard (vehicles.count < maxVehicles) && !vehicles.contains(vehicle) else {
             return onFinish(false)
         }
         
         onFinish(vehicles.insert(vehicle).inserted)
+    
     }
 }
 
 var alkeParking = Parking(maxVehicles: 2)
 
-alkeParking.checkInVehicle(Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date())) {
-    print("Inserido: \($0)")
+for vehiclesList in vehiclesList {
+    if vehiclesList.hashValue > alkeParking.maxVehicles{
+        print("Sorry")
+    }else{
+        alkeParking.checkInVehicle(vehiclesList){_ in
+            print("Welcome to AlkeParking!")
+        }
+    }
 }
-
-alkeParking.checkInVehicle(Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date())) {
-    print("Inserido: \($0)")
-}  /// inserido: false, pois estamos tentando dar checkin num carro com placa igual
-
-alkeParking.checkInVehicle(Vehicle(plate: "BBB", vehicleType: VehicleType.car, checkInTime: Date())) {
-    print("Inserido: \($0)")
-}
-alkeParking.checkInVehicle(Vehicle(plate: "CCC", vehicleType: VehicleType.car, checkInTime: Date())) {
-    print("Inserido: \($0)")
-} ///  inserido: false, pois já tem o numero máximo de veículos estacionados (2)
+print (vehiclesList)
