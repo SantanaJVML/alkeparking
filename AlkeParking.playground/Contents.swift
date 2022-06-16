@@ -31,10 +31,10 @@ enum VehicleType {
     
     var tarifa: Int {
         switch self {
-            case .car: return 20
-            case .motorcycle: return 15
-            case .microbus: return 25
-            case .bus: return 30
+        case .car: return 20
+        case .motorcycle: return 15
+        case .microbus: return 25
+        case .bus: return 30
         }
     }
 }
@@ -67,9 +67,10 @@ struct Vehicle: Parkable, Hashable {
     }
 }
 
-struct Parking{
+struct Parking {
     let maxVehicles: Int
     var vehicles: Set<Vehicle> = Set()
+    
     
     mutating func checkInVehicle(_ vehicle: Vehicle, onFinish: (Bool) -> Void) {
         guard (vehicles.count < maxVehicles) && !vehicles.contains(vehicle) else {
@@ -84,23 +85,36 @@ struct Parking{
         }
         
         let vehicle = vehicles.remove(at: vehicleIndex)
-        
+
         onSuccess(10)
     }
-}
 
-
-//vehiclesList.insert(Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil))
-//print(vehiclesList)
-
-// MARK: - Verificador de quantidade máxima e print mensagem
-
-var alkeParking = Parking(maxVehicles: 20)
-
-for vehicleList in vehiclesList {
-    alkeParking.checkInVehicle(vehicleList) { success in
-        print(success ? "Welcome to AlkeParking!" : "Sorry, the check-in failed")
+    func calculateFee(vehicleType: VehicleType, parkedTime: Int) -> Int {
+        let tariff = 0
+        
+        switch vehicleType{
+            
+        case .car:
+            parkedTime > 2 ? tariff * vehicleType.tarifa : 20
+        case .motorcycle:
+            parkedTime > 2 ? tariff * vehicleType.tarifa : 15
+        case .microbus:
+            parkedTime > 2 ? tariff * vehicleType.tarifa : 25
+        case .bus:
+            parkedTime > 2 ? tariff * vehicleType.tarifa : 30
+        }
+        return tariff
     }
+        
 }
+    // MARK: - Verificador de quantidade máxima e print mensagem
+    
+    var alkeParking = Parking(maxVehicles: 20)
+    
+    for vehicleList in vehiclesList {
+        alkeParking.checkInVehicle(vehicleList) { success in
+            print(success ? "Welcome to AlkeParking!" : "Sorry, the check-in failed")
+        }
+    }
 
 
