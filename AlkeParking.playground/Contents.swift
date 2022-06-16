@@ -1,6 +1,28 @@
 import UIKit
 
-var vehiclesList: Set<Vehicle> = [Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil), Vehicle(plate: "BBB", vehicleType: VehicleType.car, checkInTime:  Date(), discountCard: nil), Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime:  Date(), discountCard: nil), Vehicle(plate: "CCC", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil), Vehicle(plate: "CCD", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil)]
+var vehiclesList: Set<Vehicle> = [
+    Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "BBB", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "CCC", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "DDD", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "EEE", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "FFF", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "GGG", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "HHH", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "III", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "JJJ", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "KKK", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "LLL", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "MMM", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "NNN", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "OOO", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "PPP", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "QQQ", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "RRR", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "SSS", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "TTT", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "UUU", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+]
 
 //var vehiclesList: Set<Vehicle> = []
 
@@ -49,18 +71,22 @@ struct Parking{
     let maxVehicles: Int
     var vehicles: Set<Vehicle> = Set()
     
-    
-    mutating func checkInVehicle(_ vehicle: Vehicle, onFinish:
-                                 (Bool) -> Void) {
-        
+    mutating func checkInVehicle(_ vehicle: Vehicle, onFinish: (Bool) -> Void) {
         guard (vehicles.count < maxVehicles) && !vehicles.contains(vehicle) else {
             return onFinish(false)
         }
-        
         onFinish(vehicles.insert(vehicle).inserted)
-    
     }
     
+    mutating func checkOutVehicle(plate: String, onSuccess: (Int) -> Void, onError: (String) -> Void) {
+        guard let vehicleIndex = vehicles.firstIndex(where: { $0.plate == plate}) else {
+            return onError("O veículo de placa \(plate) não foi encontrado")
+        }
+        
+        let vehicle = vehicles.remove(at: vehicleIndex)
+        
+        onSuccess(10)
+    }
 }
 
 
@@ -69,16 +95,11 @@ struct Parking{
 
 // MARK: - Verificador de quantidade máxima e print mensagem
 
-var alkeParking = Parking(maxVehicles: 2)
+var alkeParking = Parking(maxVehicles: 20)
 
-var counter = 0
 for vehicleList in vehiclesList {
-    if counter < alkeParking.maxVehicles{
-        alkeParking.checkInVehicle(vehicleList){_ in
-            print("Welcome to AlkeParking!")}
-        counter += 1
-    }else{
-        print("Sorry,the check-in failed")
+    alkeParking.checkInVehicle(vehicleList) { success in
+        print(success ? "Welcome to AlkeParking!" : "Sorry, the check-in failed")
     }
 }
 
