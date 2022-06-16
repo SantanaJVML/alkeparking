@@ -1,7 +1,7 @@
 import UIKit
 
 var vehiclesList: Set<Vehicle> = [
-    Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: "123"),
     Vehicle(plate: "BBB", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil),
     Vehicle(plate: "CCC", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil),
     Vehicle(plate: "DDD", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
@@ -31,10 +31,10 @@ enum VehicleType {
     
     var tarifa: Int {
         switch self {
-        case .car: return 20
-        case .motorcycle: return 15
-        case .microbus: return 25
-        case .bus: return 30
+            case .car: return 20
+            case .motorcycle: return 15
+            case .microbus: return 25
+            case .bus: return 30
         }
     }
 }
@@ -86,24 +86,18 @@ struct Parking {
         
         let vehicle = vehicles.remove(at: vehicleIndex)
 
-        onSuccess(10)
+        onSuccess(calculateFee(vehicleType: vehicle.vehicleType, parkedTimeInMinutes: 180, hasDiscountCard: vehicle.discountCard != nil))
     }
 
-    func calculateFee(vehicleType: VehicleType, parkedTime: Int) -> Int {
-        let tariff = 0
+    func calculateFee(vehicleType: VehicleType, parkedTimeInMinutes: Int, hasDiscountCard: Bool) -> Int {
+        let parkedTimeInMinutes = parkedTimeInMinutes - 120
+        var tariff = vehicleType.tarifa
         
-        switch vehicleType{
-            
-        case .car:
-            parkedTime > 2 ? tariff * vehicleType.tarifa : 20
-        case .motorcycle:
-            parkedTime > 2 ? tariff * vehicleType.tarifa : 15
-        case .microbus:
-            parkedTime > 2 ? tariff * vehicleType.tarifa : 25
-        case .bus:
-            parkedTime > 2 ? tariff * vehicleType.tarifa : 30
+        if(parkedTimeInMinutes > 0) {
+            tariff += Int(5 * ceilf(Float(parkedTimeInMinutes) / 15))
         }
-        return tariff
+        
+        return hasDiscountCard ? Int(Float(tariff) * 0.85) : tariff
     }
         
 }
@@ -116,5 +110,5 @@ struct Parking {
             print(success ? "Welcome to AlkeParking!" : "Sorry, the check-in failed")
         }
     }
-
+alkeParking.checkOutVehicle(plate: "AAA", onSuccess: { print($0) }, onError: { print($0) })
 
