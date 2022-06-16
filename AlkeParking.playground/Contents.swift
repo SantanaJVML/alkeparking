@@ -2,6 +2,8 @@ import UIKit
 
 var vehiclesList: Set<Vehicle> = [Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil), Vehicle(plate: "BBB", vehicleType: VehicleType.car, checkInTime:  Date(), discountCard: nil), Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime:  Date(), discountCard: nil), Vehicle(plate: "CCC", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil), Vehicle(plate: "CCD", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil)]
 
+//var vehiclesList: Set<Vehicle> = []
+
 enum VehicleType {
     case car, motorcycle, microbus, bus
     
@@ -58,17 +60,26 @@ struct Parking{
         onFinish(vehicles.insert(vehicle).inserted)
     
     }
+    
 }
+
+
+//vehiclesList.insert(Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil))
+//print(vehiclesList)
+
+// MARK: - Verificador de quantidade máxima e print mensagem
 
 var alkeParking = Parking(maxVehicles: 2)
 
-for vehiclesList in vehiclesList {
-    if vehiclesList.hashValue > alkeParking.maxVehicles{
-        print("Sorry")
+var counter = 0
+for vehicleList in vehiclesList {
+    if counter < alkeParking.maxVehicles{
+        alkeParking.checkInVehicle(vehicleList){_ in
+            print("Welcome to AlkeParking!")}
+        counter += 1
     }else{
-        alkeParking.checkInVehicle(vehiclesList){_ in
-            print("Welcome to AlkeParking!")
-        }
+        print("Sorry,the check-in failed")
     }
 }
-print (vehiclesList)
+
+
