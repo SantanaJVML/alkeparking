@@ -2,9 +2,11 @@ import UIKit
 
 var vehiclesList: Set<Vehicle> = [
     Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: "123"),
-    Vehicle(plate: "BBB", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil),
-    Vehicle(plate: "CCC", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: nil),
-    Vehicle(plate: "DDD", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
+    /// Teste check-in placa duplicada
+    Vehicle(plate: "AAA", vehicleType: VehicleType.car, checkInTime: Date(), discountCard: "123"),
+    Vehicle(plate: "BBB", vehicleType: VehicleType.motorcycle, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "CCC", vehicleType: VehicleType.microbus, checkInTime: Date(), discountCard: nil),
+    Vehicle(plate: "DDD", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: "456"),
     Vehicle(plate: "EEE", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
     Vehicle(plate: "FFF", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
     Vehicle(plate: "GGG", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
@@ -84,13 +86,13 @@ struct Parking {
     
     mutating func checkOutVehicle(plate: String, onSuccess: (Int) -> Void, onError: (String) -> Void) {
         guard let vehicleIndex = vehicles.firstIndex(where: { $0.plate == plate}) else {
-            return onError("O veículo de placa \(plate) não foi encontrado")
+            return onError("Sorry, the check-out failed")
         }
         
         let vehicle = vehicles.remove(at: vehicleIndex)
         vehiclesRemoved = vehicle.plate.count
 
-        onSuccess(calculateFee(vehicleType: vehicle.vehicleType, parkedTimeInMinutes: 180, hasDiscountCard: vehicle.discountCard != nil))
+        onSuccess(calculateFee(vehicleType: vehicle.vehicleType, parkedTimeInMinutes: vehicle.parkedTime, hasDiscountCard: vehicle.discountCard != nil))
     }
     
     // MARK: Calcula tempo estacionado e tarifa
@@ -113,6 +115,12 @@ struct Parking {
     func earnings() -> String {
         return "\(vehiclesRemoved) vehicles have checked out and have earnings of \(totalEarnings)"
     }
+    
+    // MARK: Imprime a lista de todos os veículos estacionados
+    
+    func listVehicles() -> [String] {
+        return vehicles.map { $0.plate }
+    }
 }
 
     // MARK: - Verificador de quantidade máxima e print mensagem
@@ -125,9 +133,10 @@ var alkeParking = Parking(maxVehicles: 20, vehiclesRemoved: 0, totalEarnings: 0)
         }
     }
 
-alkeParking.checkOutVehicle(plate: "AAA", onSuccess: { print($0) }, onError: { print($0) })
-alkeParking.checkOutVehicle(plate: "BBB", onSuccess: { print($0) }, onError: { print($0) })
-alkeParking.checkOutVehicle(plate: "CCC", onSuccess: { print($0) }, onError: { print($0) })
+alkeParking.checkOutVehicle(plate: "AAA", onSuccess: { print("Your fee is \($0). Come back soon!") }, onError: { print($0) })
+alkeParking.checkOutVehicle(plate: "BBB", onSuccess: { print("Your fee is \($0). Come back soon!") }, onError: { print($0) })
+alkeParking.checkOutVehicle(plate: "CCC", onSuccess: { print("Your fee is \($0). Come back soon!") }, onError: { print($0) })
 
 print(alkeParking.earnings())
 
+print(alkeParking.listVehicles())
