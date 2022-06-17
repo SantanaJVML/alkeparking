@@ -24,8 +24,6 @@ var vehiclesList: Set<Vehicle> = [
     Vehicle(plate: "UUU", vehicleType: VehicleType.bus, checkInTime: Date(), discountCard: nil),
 ]
 
-//var vehiclesList: Set<Vehicle> = []
-
 enum VehicleType {
     case car, motorcycle, microbus, bus
     
@@ -70,7 +68,10 @@ struct Vehicle: Parkable, Hashable {
 struct Parking {
     let maxVehicles: Int
     var vehicles: Set<Vehicle> = Set()
-    
+    var vehiclesRemoved: Int
+    var totalEarnings: Int
+        
+    // MARK: Verifica se carro estacionou
     
     mutating func checkInVehicle(_ vehicle: Vehicle, onFinish: (Bool) -> Void) {
         guard (vehicles.count < maxVehicles) && !vehicles.contains(vehicle) else {
@@ -79,17 +80,22 @@ struct Parking {
         onFinish(vehicles.insert(vehicle).inserted)
     }
     
+    // MARK: Verifica se o carro foi retirado
+    
     mutating func checkOutVehicle(plate: String, onSuccess: (Int) -> Void, onError: (String) -> Void) {
         guard let vehicleIndex = vehicles.firstIndex(where: { $0.plate == plate}) else {
             return onError("O veículo de placa \(plate) não foi encontrado")
         }
         
         let vehicle = vehicles.remove(at: vehicleIndex)
+        vehiclesRemoved = vehicle.plate.count
 
         onSuccess(calculateFee(vehicleType: vehicle.vehicleType, parkedTimeInMinutes: 180, hasDiscountCard: vehicle.discountCard != nil))
     }
+    
+    // MARK: Calcula tempo estacionado e tarifa
 
-    func calculateFee(vehicleType: VehicleType, parkedTimeInMinutes: Int, hasDiscountCard: Bool) -> Int {
+    mutating func calculateFee(vehicleType: VehicleType, parkedTimeInMinutes: Int, hasDiscountCard: Bool) -> Int {
         let parkedTimeInMinutes = parkedTimeInMinutes - 120
         var tariff = vehicleType.tarifa
         
@@ -97,18 +103,31 @@ struct Parking {
             tariff += Int(5 * ceilf(Float(parkedTimeInMinutes) / 15))
         }
         
-        return hasDiscountCard ? Int(Float(tariff) * 0.85) : tariff
+        let parkingFee = hasDiscountCard ? Int(Float(tariff) * 0.85) : tariff
+        totalEarnings += parkingFee
+
+        return parkingFee
     }
-        
+    // MARK: Imprime veiculos removidos e ganhos
+    
+    func earnings() -> String {
+        return "\(vehiclesRemoved) vehicles have checked out and have earnings of \(totalEarnings)"
+    }
 }
+
     // MARK: - Verificador de quantidade máxima e print mensagem
     
-    var alkeParking = Parking(maxVehicles: 20)
+var alkeParking = Parking(maxVehicles: 20, vehiclesRemoved: 0, totalEarnings: 0)
     
     for vehicleList in vehiclesList {
         alkeParking.checkInVehicle(vehicleList) { success in
             print(success ? "Welcome to AlkeParking!" : "Sorry, the check-in failed")
         }
     }
+
 alkeParking.checkOutVehicle(plate: "AAA", onSuccess: { print($0) }, onError: { print($0) })
+alkeParking.checkOutVehicle(plate: "BBB", onSuccess: { print($0) }, onError: { print($0) })
+alkeParking.checkOutVehicle(plate: "CCC", onSuccess: { print($0) }, onError: { print($0) })
+
+print(alkeParking.earnings())
 
